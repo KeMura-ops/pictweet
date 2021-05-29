@@ -9,6 +9,7 @@ class User < ApplicationRecord
   has_many :followings, through: :relationships, source: :follow # データを取得後の出口(フォロー)
   has_many :reverse_of_relationships, class_name: 'Relationship', foreign_key: 'follow_id' # 入り口(フォロワー)
   has_many :followers, through: :reverse_of_relationships, source: :user # 出口(フォロワー)
+  has_many :likes
   
   validates :nickname, presence: true, length: { maximum: 6 }
 
@@ -25,5 +26,9 @@ class User < ApplicationRecord
 
   def following?(other_user)
     self.followings.include?(other_user)
+  end
+
+  def liked_by?(tweet)
+    likes.where(post_id: @tweet.id).exists?
   end
 end
